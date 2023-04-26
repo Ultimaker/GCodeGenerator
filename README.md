@@ -40,3 +40,18 @@ Currently, saving as `.gcode` or `.ufp` are supported. Additionally, you can spe
 - `time_estimate`: number of seconds the print takes. If not specified, an automatic estimate is used.
 - `image`: Image to include as thumbnail (UFP only)
 - `name`: Name for the object in the metadata json (UFP only)
+
+## Plugins
+To keep the code organized, the generator only has basic commands built in. Functions for more complex patterns can be added to the plugins folder.
+When a script needs these functions, it can import that module. This makes these functions available in the `GCodeGenerator.plugins` namespace.  
+A function defined as:
+```python
+@GeneratorPlugin
+def my_special_function(gcode: "GCodeGenerator", x, y, a, b):
+    ...
+```
+can then be used as:
+```python
+gcode.plugins.my_special_function(x, y, a, b)
+```
+See `gcode_generator/plugins/patterns.py` for more examples.
