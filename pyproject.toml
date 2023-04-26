@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gcode_generator"
+version = "2.0"
+description = "A python library for generating 3D printer GCode"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Ultimaker/GCodeGenerator"
+"Bug Tracker" = "https://github.com/Ultimaker/GCodeGenerator/issues"
