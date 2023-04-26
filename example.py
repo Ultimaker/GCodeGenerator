@@ -4,11 +4,11 @@ from gcode_generator import GCodeGenerator, Axis, Vector3
 gcode = GCodeGenerator('Ultimaker S7', layer_height = 0.15)
 gcode.create_tool('AA 0.4', 'git:generic_pla')
 # gcode.create_tool('AA 0.4', 'git:generic_pla', offset=Vector3(22, 0, 0))
+# gcode.select_tool(0)
 
 centerx, centery = 150, 100
 radius = 25
 
-gcode.select_tool(0)
 gcode.move(10, 10)
 gcode.prime()
 gcode.retract()

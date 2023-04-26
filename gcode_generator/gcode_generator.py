@@ -267,8 +267,8 @@ class GCodeGenerator:
         self.tools: list[Tool] = []
 
         self.boundingbox = None
-        self.active_tool = None
-        self.initial_tool = None
+        self._active_tool = None
+        self._initial_tool = None
         self.current_feedrate = 0
         self.print_time = 0
 
@@ -295,15 +295,15 @@ class GCodeGenerator:
             raise ValueError('Tool index out of bounds')
         if self.initial_tool is None:
             # Keep track of first tool used
-            self.initial_tool = idx
-        if idx == self.active_tool:
+            self._initial_tool = idx
+        if idx == self._active_tool:
             # Don't do anything if this tool is already active
             return
-        if self.active_tool is not None:
+        if self._active_tool is not None:
             # Set previous tool to standby temperature
-            self.set_temperature(int(self.tool.material('standby temperature', 100)), tool=self.active_tool, wait=False)
+            self.set_temperature(int(self.tool.material('standby temperature', 100)), tool=self._active_tool, wait=False)
 
-        self.active_tool = idx
+        self._active_tool = idx
         self.writeline(f'T{idx}')
         self.set_position(e=0)
 
@@ -313,9 +313,21 @@ class GCodeGenerator:
     @property
     def tool(self) -> Tool:
         """The currently selected tool"""
-        if self.active_tool is None:
+        if len(self.tools) == 0:
+            raise RuntimeError('No tool created')
+        if len(self.tools) == 1:
+            print("AUTOSELECT TOOL")
+            return self.tools[0]        # Automatically select tool if there is only 1 available
+        if self._active_tool is None:
             raise RuntimeError('No tool selected')
-        return self.tools[self.active_tool]
+        return self.tools[self._active_tool]
+
+    @property
+    def initial_tool(self) -> int:
+        if len(self.tools) == 1:
+            print("AUTOSELECT INITIAL TOOL")
+            return 0
+        return self._initial_tool
 
     def xyz2args(self, x: float = None, y: float = None, z: float = None, e: float = None, f: float = None) -> list[str]:
         """Convert the axes into the correct GCode format (X12.34 Y5.6 ...)"""
