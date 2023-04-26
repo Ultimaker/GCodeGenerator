@@ -1,6 +1,8 @@
 # GCodeGenerator
-Python library to generate gcode for Ultimaker 3D printers.  
-:warning: This repository is only for this library, not scripts that use this to create gcode. Store those scripts in your project specific repositories.
+Python library to generate gcode for Ultimaker 3D printers.
+
+:warning: This repository is only for this library, not scripts that use this to create gcode. Store those scripts in your project specific repositories.  
+You can install this library using `pip install git+https://github.com/Ultimaker/GCodeGenerator.git`
 
 ```python
 from gcode_generator import GCodeGenerator
