@@ -261,7 +261,6 @@ class Material:
 class GCodeGenerator:
     def __init__(self, machine_name, layer_height=None):
         self.buffer = tempfile.TemporaryFile('w+t', newline='\n')
-        self.file = self.buffer
         self.position = Vector3(0.0, 0.0, 0.0)
         self.layer_height = layer_height
         self.machine_name = machine_name
@@ -554,7 +553,7 @@ class GCodeGenerator:
 
     def writeline(self, line=''):
         """Write a line of GCode"""
-        self.file.write(line + '\n')
+        self.buffer.write(line + '\n')
 
     def save(self, file: Union[str, typing.IO], **kwargs):
         self.comment('end of gcode')
