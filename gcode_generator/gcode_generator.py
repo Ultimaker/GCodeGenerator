@@ -315,18 +315,15 @@ class GCodeGenerator:
         """The currently selected tool"""
         if len(self.tools) == 0:
             raise RuntimeError('No tool created')
-        if len(self.tools) == 1:
-            print("AUTOSELECT TOOL")
-            return self.tools[0]        # Automatically select tool if there is only 1 available
         if self._active_tool is None:
-            raise RuntimeError('No tool selected')
+            if len(self.tools) == 1:
+                self.select_tool(0)     # Automatically select tool if there is only 1 available
+            else:
+                raise RuntimeError('No tool selected')
         return self.tools[self._active_tool]
 
     @property
     def initial_tool(self) -> int:
-        if len(self.tools) == 1:
-            print("AUTOSELECT INITIAL TOOL")
-            return 0
         return self._initial_tool
 
     def xyz2args(self, x: float = None, y: float = None, z: float = None, e: float = None, f: float = None) -> list[str]:
