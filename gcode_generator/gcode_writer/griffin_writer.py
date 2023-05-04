@@ -57,9 +57,9 @@ class GriffinWriter(GCodeWriter, extension='gcode'):
                 }
             }
             if idx == generator.initial_tool:
-                settings['INITIAL_TEMPERATURE'] = int(tool.material('print temperature', 200))
+                settings['INITIAL_TEMPERATURE'] = float(tool.material('print temperature', 200))
             else:
-                settings['INITIAL_TEMPERATURE'] = int(tool.material('standby temperature', 100))
+                settings['INITIAL_TEMPERATURE'] = float(tool.material('standby temperature', 100))
             header['EXTRUDER_TRAIN'][str(idx)] = settings
 
         lines = ['START_OF_HEADER', *cls._dict2header(header), 'END_OF_HEADER']
