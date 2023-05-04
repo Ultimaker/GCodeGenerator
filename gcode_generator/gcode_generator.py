@@ -1,3 +1,4 @@
+import io
 import re
 import enum
 import math
@@ -260,7 +261,7 @@ class Material:
 
 class GCodeGenerator:
     def __init__(self, machine_name, layer_height=None):
-        self.buffer = tempfile.TemporaryFile('w+t', newline='\n')
+        self.buffer = io.StringIO(newline='\n')
         self.position = Vector3(0.0, 0.0, 0.0)
         self.layer_height = layer_height
         self.machine_name = machine_name
@@ -572,4 +573,4 @@ class GCodeGenerator:
             self.writeline(f'M104 T{i} S0')     # Hotends off
         self.writeline('M140 S0')               # Bed off
 
-        GCodeWriter.write(self, self.buffer, file, **kwargs)
+        GCodeWriter.write(self, self.buffer.getvalue(), file, **kwargs)

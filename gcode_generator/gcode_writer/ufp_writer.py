@@ -15,7 +15,7 @@ if typing.TYPE_CHECKING:
 
 class UFPWriter(GCodeWriter, extension='ufp'):
     @classmethod
-    def write(cls, generator: "GCodeGenerator", gcode: typing.TextIO, file: str, image=None, name=None, **kwargs):
+    def write(cls, generator: "GCodeGenerator", gcode: str, file: str, image=None, name=None, **kwargs):
         with zipfile.ZipFile(file, 'w') as ufp:
             # Add gcode file
             with ufp.open('/3D/model.gcode', 'w') as gcode_file:

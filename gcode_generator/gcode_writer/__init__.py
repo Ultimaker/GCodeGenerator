@@ -1,3 +1,4 @@
+import io
 import typing
 from typing import Union
 if typing.TYPE_CHECKING:
@@ -12,7 +13,7 @@ class GCodeWriter:
             cls._writers[kwargs['extension'].lower()] = cls
 
     @classmethod
-    def write(cls, generator: "GCodeGenerator", gcode: typing.TextIO, file: Union[str, typing.IO],
+    def write(cls, generator: "GCodeGenerator", gcode: str, file: Union[str, typing.IO],
               writer: "GCodeWriter" = None, format: str = None, **kwargs):
         if writer is None:
             if format is None:

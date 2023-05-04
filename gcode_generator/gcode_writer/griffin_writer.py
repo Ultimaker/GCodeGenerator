@@ -1,3 +1,4 @@
+import io
 import typing
 from typing import Union
 
@@ -8,7 +9,7 @@ if typing.TYPE_CHECKING:
 
 class GriffinWriter(GCodeWriter, extension='gcode'):
     @classmethod
-    def write(cls, generator: "GCodeGenerator", gcode: typing.TextIO, file: Union[str, typing.TextIO], **kwargs):
+    def write(cls, generator: "GCodeGenerator", gcode: str, file: Union[str, typing.TextIO], **kwargs):
         if isinstance(file, str):
             # If 'file' is a filename [str], open file and re-run method
             with open(file, 'wt', newline='\n') as f:
@@ -16,10 +17,7 @@ class GriffinWriter(GCodeWriter, extension='gcode'):
         else:
             file.write(cls.generate_header(generator, **kwargs))
             file.write('\n\n')
-
-            gcode.seek(0)
-            for line in gcode.readlines():
-                file.write(line)
+            file.write(gcode)
 
     @classmethod
     def generate_header(cls, generator, time_estimate=None, **kwargs):
