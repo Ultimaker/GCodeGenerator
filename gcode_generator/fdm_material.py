@@ -19,14 +19,7 @@ class FDMReader:
     def __init__(self, filename: str):
         if filename.startswith('git:'):
             filename = filename.removeprefix('git:')
-            if '@' in filename:
-                filename, commit = filename.split('@', 1)
-            else:
-                commit = 'master'
-            filename = filename + '.xml.fdm_material'
-            url = f'https://raw.githubusercontent.com/Ultimaker/fdm_materials/{commit}/{filename}'
-            with urllib.request.urlopen(url) as file:
-                self.data = file.read()
+            self.data = self.download_material(filename)
         else:
             if not filename.endswith('.xml.fdm_material'):
                 filename = filename + '.xml.fdm_material'
@@ -43,3 +36,14 @@ class FDMReader:
 
     def __bytes__(self):
         return self.data
+
+    @staticmethod
+    def download_material(filename):
+        if '@' in filename:
+            filename, commit = filename.split('@', 1)
+        else:
+            commit = 'master'
+        filename = filename + '.xml.fdm_material'
+        url = f'https://raw.githubusercontent.com/Ultimaker/fdm_materials/{commit}/{filename}'
+        with urllib.request.urlopen(url) as file:
+            return file.read()
