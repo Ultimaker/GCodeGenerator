@@ -196,21 +196,14 @@ class Tool:
 class Hotend:
     """
     Hotend class - Initialize with a hotend name and machine name
-      For machine Ultimaker 2 [Go|Extended]: hotend_name is ignored, diameter = 0.4mm
-      For machine Ultimaker 2+ [Extended|Connect]: hotend_name should be 'x.y mm'
-      For machine Ultimaker 3 [Extended] or S-line: hotend_name should be the print-core name ('AA 0.4'/...)
+      hotend_name should be a print-core name ('AA 0.4' 'BB 0.8' 'CC 0.6' 'AA 0.25', ...)
+       or a UM2+ nozzle size ('0.4 mm', '0.8mm', ...)
     """
     def __init__(self, hotend_name: str, machine: str):
         self.name = hotend_name
-        if machine in ('Ultimaker 2', 'Ultimaker 2 Go', 'Ultimaker 2 Extended'):
-            self.name = '0.4 mm'
-            self.diameter = 0.4
-        elif machine in ('Ultimaker 2+', 'Ultimaker 2 Extended+', 'Ultimaker 2+ Connect'):
-            # Ultimaker 2+ | Ultimaker 2 Extended+
-            self.diameter = float(re.fullmatch(r'(\d+(\.\d+)?) mm', hotend_name).group(1))
-        elif machine in ('Ultimaker 3', 'Ultimaker 3 Extended') or re.match('Ultimaker S.+', machine):
-            # Ultimaker 3 | Ultimaker 3 Extended | Ultimaker S-Line
-            self.diameter = float(re.match(r'.+ (\d+\.\d+)', hotend_name).group(1))
+        match = re.match(r'(?:[A-Z]{2} )?(\d+\.\d+)(?: ?mm)?', self.name)
+        if match:
+            self.diameter = float(match.group(1))
 
 
 class Material:
