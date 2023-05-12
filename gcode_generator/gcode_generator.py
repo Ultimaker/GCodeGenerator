@@ -263,6 +263,7 @@ class GCodeGenerator:
         self.boundingbox = None
         self._active_tool = None
         self._initial_tool = None
+        self._current_layer = -1
         self.current_feedrate = 0
         self.print_time = 0
 
@@ -548,6 +549,12 @@ class GCodeGenerator:
     def comment(self, text):
         """Add a comment to the GCode"""
         self.writeline(f';{text}')
+
+    def mark_layer(self, layer=None):
+        if layer is None:
+            layer = self._current_layer + 1
+        self._current_layer = layer
+        self.comment(f'LAYER:{self._current_layer}')
 
     def add_time_estimation(self, time=None):
         if time is None:

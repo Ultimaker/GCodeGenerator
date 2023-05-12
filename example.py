@@ -20,7 +20,7 @@ gcode.writeline()
 gcode.move(x=centerx + radius, y=centery, z=gcode.layer_height)
 gcode.unretract()
 for layer in range(100):
-    gcode.comment(f'LAYER:{layer}')
+    gcode.mark_layer()
     gcode.move(z=(layer+1) * gcode.layer_height, f=10)
     gcode.move(centerx+radius, centery)
 
