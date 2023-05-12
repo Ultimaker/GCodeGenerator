@@ -4,6 +4,7 @@ import enum
 import math
 import typing
 import tempfile
+import warnings
 from typing import Any, Union, Optional, Literal
 
 import numpy as np
@@ -11,6 +12,10 @@ import numpy as np
 from .fdm_material import FDMReader
 from .gcode_writer import GCodeWriter
 from .plugins import GeneratorPlugin
+
+
+class GCodeWarning(RuntimeWarning):
+    ...
 
 
 class Vector3:
@@ -415,6 +420,9 @@ class GCodeGenerator:
         material_volume = self.layer_height * self.tool.line_width * distance   # mm^3 of material for the line being extruded
         material_distance = material_volume / self.tool.material.area           # mm of filament to feed
         material_distance *= flowrate
+        if new_position.z < self.layer_height:                                  # Automatically reduce flowrate if z < layer height
+            warnings.warn(f'Reducing flowrate because Z position is less than layer height', GCodeWarning, stacklevel=2)
+            material_distance *= (new_position.z / self.layer_height)
 
         self.update_bbox()                                                      # Update bounding box with start of line
         self.move(x, y, z, material_distance, f=f, relative=Axis.E, cmd='G1')
