@@ -10,7 +10,7 @@ import numpy as np
 
 from .fdm_material import FDMReader
 from .gcode_writer import GCodeWriter
-from .plugins import GeneratorPluginManager
+from .plugins import GeneratorPlugin
 
 
 class Vector3:
@@ -266,7 +266,7 @@ class GCodeGenerator:
         self.current_feedrate = 0
         self.print_time = 0
 
-        self.plugins = GeneratorPluginManager(self)
+        self.plugins = GeneratorPlugin.bind(self)
 
         self.writeline('M82')
         self.writeline()
