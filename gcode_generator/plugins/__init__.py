@@ -2,25 +2,27 @@ import functools
 from typing import Type, Callable
 
 
-class GeneratorPlugin:
-    _plugins = {}
-    _sub_managers = {}
-    _classpath = 'plugins'
-
-    def __new__(cls, func: Callable) -> Callable:
-        # Register argument as a plugin
+class GeneratorPluginMeta(type):
+    def __call__(cls: "GeneratorPlugin", func: Callable) -> Callable:
         path = cls._classpath
         if path not in cls._plugins:
             cls._plugins[path] = {}
         cls._plugins[path][func.__name__] = func
         return func
 
+    def bind(cls, *args, **kwargs):
+        return type.__call__(cls, *args, **kwargs)
+
+
+class GeneratorPlugin(metaclass=GeneratorPluginMeta):
+    _plugins = {}
+    _sub_managers = {}
+    _classpath = 'plugins'
+
     @classmethod
     def bind(cls, generator):
         # Actual constructor
-        self = object.__new__(cls)
-        self.__init__(generator)
-        return self
+        return GeneratorPluginMeta.bind(cls, generator)
 
     def __init__(self, generator):
         self.generator = generator
