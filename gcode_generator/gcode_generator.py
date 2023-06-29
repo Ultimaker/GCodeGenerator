@@ -581,4 +581,6 @@ class GCodeGenerator:
             self.writeline(f'M104 T{i} S0')     # Hotends off
         self.writeline('M140 S0')               # Bed off
 
+        if self.boundingbox is None:
+            self.update_bbox()                      # Make sure we have at least _something_ to put in the header...
         GCodeWriter.write(self, self.buffer.getvalue(), file, **kwargs)
