@@ -5,7 +5,7 @@ import math
 import typing
 import tempfile
 import warnings
-from typing import Any, Union, Optional, Literal
+from typing import Any, Union, Optional, Literal, TextIO
 
 import numpy as np
 
@@ -190,9 +190,10 @@ class Tool:
     """
     Tool class - Initialize with a hotend name, material name, machine name and line width to print with.
     """
-    def __init__(self, hotend_name, material_name, machine_name, line_width=None, offset=None):
+    def __init__(self, hotend_name: str, material: Union[str, TextIO], machine_name: str,
+                 line_width: float = None, offset: Vector3 = None):
         self.nozzle = Hotend(hotend_name, machine_name)
-        self.material = Material(material_name, machine_name, self.nozzle.name)
+        self.material = Material(material, machine_name, self.nozzle.name)
         self.line_width = line_width if line_width is not None else self.nozzle.diameter
         self.position = 0.0
         self.offset = offset if offset is not None else Vector3(0,0,0)
@@ -216,8 +217,8 @@ class Material:
     Material class - Initialize with a fdm_material file, and optionally machine name and hotend name
       When a machine name and hotend name are specified, it will add the specific settings applicable
     """
-    def __init__(self, material_name: str, machine=None, hotend=None):
-        self.file = FDMReader(material_name)
+    def __init__(self, material: Union[str, TextIO], machine=None, hotend=None):
+        self.file = FDMReader(material)
         self.material = self.file.getroot()
 
         self.diameter = float(self.material.find('properties/diameter').text)
@@ -278,7 +279,7 @@ class GCodeGenerator:
         self.writeline()
         self.comment('start of gcode')
 
-    def create_tool(self, hotend_name, material_name, line_width=None, offset=None):
+    def create_tool(self, hotend_name, material: Union[str, TextIO], line_width=None, offset=None):
         """
         Add a tool to the machine.
           For hotend_name, see the Hotend class
@@ -286,7 +287,7 @@ class GCodeGenerator:
           line_width is the extrusion width - set to the nozzle diameter if not specified
           offset is the XY(Z) offset of this nozzle compared to the printer position
         """
-        tool = Tool(hotend_name, material_name, self.machine_name, line_width, offset=offset)
+        tool = Tool(hotend_name, material, self.machine_name, line_width, offset=offset)
         self.tools.append(tool)
 
     def select_tool(self, idx):

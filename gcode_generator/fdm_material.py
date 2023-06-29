@@ -1,6 +1,7 @@
 import re
 import urllib.request
 import xml.etree.ElementTree
+from typing import Union, TextIO, Optional
 
 
 class FDMElement(xml.etree.ElementTree.Element):
@@ -18,19 +19,30 @@ class FDMReader:
     """
     EXTENSION = '.xml.fdm_material'
 
-    def __init__(self, filename: str):
-        if filename.startswith('git:'):
-            filename = filename.removeprefix('git:')
-            commit = 'master'
-            if '@' in filename:
-                filename, commit = filename.split('@', 1)
-            filename = self.assert_suffix(filename, self.EXTENSION)
-            self.data = self.download_material(filename, commit)
+    def __init__(self, file: Union[str, TextIO]):
+        if isinstance(file, str):
+            if file.startswith('git:'):
+                file = file.removeprefix('git:')
+                commit = 'master'
+                if '@' in file:
+                    file, commit = file.split('@', 1)
+                file = self.assert_suffix(file, self.EXTENSION)
+                self.data = self.download_material(file, commit)
+            else:
+                file = self.assert_suffix(file, self.EXTENSION)
+                with open(file, 'rb') as f:
+                    self.data = f.read()
+            self.filename = file
         else:
-            filename = self.assert_suffix(filename, self.EXTENSION)
-            with open(filename, 'rb') as file:
-                self.data = file.read()
-        self.filename = filename
+            self.data = file.read()
+            if isinstance(self.data, str):
+                self.data = self.data.encode('utf-8')
+            self.filename: Optional[str] = None
+            for attr in ['name', 'file', 'filename']:
+                self.filename = getattr(file, attr, None)
+                if isinstance(self.filename, str) and self.filename:
+                    self.filename = self.assert_suffix(self.filename, self.EXTENSION)
+                    break
 
         builder = xml.etree.ElementTree.TreeBuilder(element_factory=FDMElement)
         parser = xml.etree.ElementTree.XMLParser(target=builder)
