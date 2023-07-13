@@ -62,6 +62,10 @@ class GriffinWriter(GCodeWriter, extension='gcode'):
                 settings['INITIAL_TEMPERATURE'] = float(tool.material('standby temperature', 100))
             header['EXTRUDER_TRAIN'][str(idx)] = settings
 
+        build_volume_temps = [tool.material('build volume temperature') for tool in generator.tools]
+        if any(temp is not None for temp in build_volume_temps):
+            header['BUILD_VOLUME'] = {'TEMPERATURE': min(temp for temp in build_volume_temps if temp is not None)}
+
         if kwargs.get('emulate_cura', False):
             header['GENERATOR'] = {'NAME': 'Cura_SteamEngine', 'VERSION': '5.3.0', 'BUILD_DATE': '2023-03-07'}
         lines = ['START_OF_HEADER', *cls._dict2header(header), 'END_OF_HEADER']
