@@ -46,7 +46,7 @@ class Hotend:
     """
     def __init__(self, hotend_name: str, machine: str):
         self.name = hotend_name
-        match = re.match(r'(?:[A-Z]{2} )?(\d+\.\d+)(?: ?mm)?', self.name)
+        match = re.match(r'(?:[A-Z]{2}\+? )?(\d+\.\d+)(?: ?mm)?', self.name)
         if match:
             self.diameter = float(match.group(1))
 
