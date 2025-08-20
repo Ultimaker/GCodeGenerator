@@ -190,6 +190,8 @@ class GCodeGenerator:
         """
         Move the printhead in X,Y,Z axes, and automatically calculate how much filament to extrude
         """
+        if not isinstance(relative, Axis):
+            relative = Axis.ALL if relative else Axis.NONE
         virtual_position = self.position.copy()
         virtual_position.update(x=x, y=y, z=z, relative=relative)
 
@@ -206,7 +208,7 @@ class GCodeGenerator:
             f = float(self.tools.current.material('print speed', 70))
 
         self.update_bbox()                                                      # Update bounding box with start of line
-        self.move(x, y, z, material_distance, f=f, relative=Axis.E, cmd='G1')
+        self.move(x, y, z, material_distance, f=f, relative=relative|Axis.E, cmd='G1')
         self.update_bbox()                                                      # Update bounding box with end of line
 
     def extrude_polar(self, angle, length, flowrate: float = 1.0, f: float = None):
